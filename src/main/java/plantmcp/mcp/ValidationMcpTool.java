@@ -18,6 +18,23 @@ class ValidationMcpTool extends CustomMcpTool {
 	}
 
 	@Override
+	protected String description() {
+		return """
+				Validate PlantUML source text and return syntax diagnostics.
+				
+				Input:
+				- data: PlantUML source (string). Typically includes @startuml ... @enduml.
+				
+				Output:
+				- isError=false: text "Schema is valid" when no errors occurs.
+				- isError=true: w/ possible list of parser errors or a general error message.
+				
+				Notes:
+				- Validation only (no rendering).
+				""".trim();
+	}
+
+	@Override
 	protected BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler() {
 		return (_, req) -> {
 			var data = req.arguments().get("data");
