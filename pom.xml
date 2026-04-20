@@ -64,14 +64,6 @@
         <!--endregion-->
     </dependencyManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub GiacomoFM Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/giacomofm/plantmcp</url>
-        </repository>
-    </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
