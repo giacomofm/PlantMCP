@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build fat JAR
-        run: ./mvnw -B package --file pom.xml
+        run: mvn -B package --file pom.xml
 
       - name: Delete existing latest release
         env:
