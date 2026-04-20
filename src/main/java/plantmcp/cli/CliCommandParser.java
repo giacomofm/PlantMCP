@@ -24,6 +24,7 @@ public final class CliCommandParser {
 			case validate -> new ValidateCliOperation(engine, args);
 			case encode -> new EncodeCliOperation(engine, args);
 			case decode -> new DecodeCliOperation(engine, args);
+			case render -> new RenderCliOperation(engine, args);
 		};
 	}
 

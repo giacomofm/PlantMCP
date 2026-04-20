@@ -2,6 +2,7 @@ package plantmcp.cli;
 
 import plantmcp.plant.PlantEngine;
 
+import java.io.IOException;
 import java.util.Objects;
 
 final class DecodeCliOperation implements CliOperation {
@@ -19,7 +20,7 @@ final class DecodeCliOperation implements CliOperation {
 	}
 
 	@Override
-	public int execute() throws Exception {
+	public int execute() throws IOException {
 		String decoded = engine.decode(encoded);
 		IO.println(decoded);
 		return 0;

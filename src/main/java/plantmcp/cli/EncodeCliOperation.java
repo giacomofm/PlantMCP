@@ -2,6 +2,7 @@ package plantmcp.cli;
 
 import plantmcp.plant.PlantEngine;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -21,7 +22,7 @@ final class EncodeCliOperation implements CliOperation {
 	}
 
 	@Override
-	public int execute() throws Exception {
+	public int execute() throws IOException {
 		if (!Files.exists(path)) {
 			throw new IllegalArgumentException("File not found: " + path);
 		}
