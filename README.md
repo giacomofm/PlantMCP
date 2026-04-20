@@ -4,14 +4,32 @@ _(Still in early development, I'm testing functionality and tools, feedbacks are
 
 MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library
 
+## Quick Start
+
+**You need Java 25 to run the server.**  
+Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/PlantMCP/releases/tag/latest) and add it to your MCP client config:
+
+```json
+{
+  "mcpServers": {
+    "PlantMCP": {
+      "type": "local",
+      "command": "java",
+      "args": ["-jar", "/path/to/plantmcp.jar"]
+    }
+  }
+}
+```
+_Tested on GitHub Copilot_
+
 ## Tools
 
-| Tool         | Input                              | Output                                                           |
-|--------------|------------------------------------|------------------------------------------------------------------|
-| `validation` | `data`: PlantUML source            | `"Schema is valid"` or syntax errors                             |
-| `encode`     | `data`: PlantUML source            | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
-| `decode`     | `data`: Encoded string             | PlantUML source                                                  |
-| `render`     | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path |
+| Tool         | Input                                        | Output                                                           |
+|--------------|----------------------------------------------|------------------------------------------------------------------|
+| `validation` | `data`: PlantUML source                      | `"Schema is valid"` or syntax errors                             |
+| `encode`     | `data`: PlantUML source                      | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
+| `decode`     | `data`: Encoded string                       | PlantUML source                                                  |
+| `render`     | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path     |
 
 All tools accept a `data` string parameter and return `isError` flag on failure. `render` also requires a `path` parameter.
 
