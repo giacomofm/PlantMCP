@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**plantmcp** is an MCP (Model Context Protocol) server that enables AI agents to validate, encode, and decode PlantUML diagrams. Any MCP-compatible client can connect over stdio and use these tools programmatically.
+**plantmcp** is an MCP (Model Context Protocol) server that enables AI agents to validate, encode, decode, and render PlantUML diagrams. Any MCP-compatible client can connect over stdio and use these tools programmatically.
 
 ### Architecture
 
@@ -10,7 +10,8 @@
 Main → ServerMcpApp → McpSyncServer (stdio transport)
                           ├── ValidationMcpTool  (validate PlantUML source)
                           ├── EncodeMcpTool      (source → encoded string)
-                          └── DecodeMcpTool      (encoded string → source)
+                          ├── DecodeMcpTool      (encoded string → source)
+                          └── RenderMcpTool      (source + path → SVG file on disk)
 
 All tools extend CustomMcpTool → delegates to PlantEngine
 ```
@@ -22,7 +23,7 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 | `plantmcp`       | Entry point (`Main`)                         |
 | `plantmcp.mcp`   | MCP server, tool base class, tool impls      |
 | `plantmcp.plant` | `PlantEngine` — wraps PlantUML library calls |
-| `plantmcp.cli`   | CLI interface (validate/encode/decode)       |
+| `plantmcp.cli`   | CLI interface (validate/encode/decode/render) |
 
 **Key classes:**
 
@@ -33,7 +34,8 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 | `ValidationMcpTool` | MCP tool: validates PlantUML source for syntax errors          |
 | `EncodeMcpTool`     | MCP tool: encodes PlantUML source to shareable string          |
 | `DecodeMcpTool`     | MCP tool: decodes encoded string back to PlantUML source       |
-| `PlantEngine`       | Wraps PlantUML library (`getErrors`, `encode`, `decode`)       |
+| `RenderMcpTool`     | MCP tool: renders PlantUML source to SVG file on disk          |
+| `PlantEngine`       | Wraps PlantUML library (`getErrors`, `encode`, `decode`, `renderSvg`) |
 
 ### Tech Stack
 
@@ -64,7 +66,7 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 
 ## MCP Tools
 
-All tools accept a single `data` parameter (required, type `string`). All return `McpSchema.CallToolResult` with `isError` flag.
+All tools accept a `data` parameter (required, type `string`). `render` also requires a `path` parameter. All return `McpSchema.CallToolResult` with `isError` flag.
 
 ### `validation` — Validate PlantUML source
 
@@ -99,11 +101,23 @@ Encoded string usable in PlantUML server URLs: `https://www.plantuml.com/plantum
 - Non-string / null input → `isError: true`, `"Invalid input data. Expected a string."`
 - Invalid encoded string → `isError: true`, `"An error occurred during decoding: <message>"`
 
+### `render` — Render PlantUML source to SVG file
+
+| Input                                              | Output (success)                              |
+|----------------------------------------------------|-----------------------------------------------|
+| `data`: PlantUML source string, `path`: output path | Confirmation message with absolute file path |
+
+SVG content written to disk; not returned to caller.
+
+**Error handling:**
+- Non-string / null input → `isError: true`, `"Invalid input data. Expected a string."`
+- Render failure → `isError: true`, `"An error occurred during rendering: <message>"`
+
 ---
 
 ## CLI Interface
 
-CLI operations exist in `plantmcp.cli` package. Same 3 operations (validate, encode, decode) but file-based.
+CLI operations exist in `plantmcp.cli` package. Same 4 operations (validate, encode, decode, render) but file-based.
 
 ### Exit Codes
 
@@ -117,9 +131,10 @@ CLI operations exist in `plantmcp.cli` package. Same 3 operations (validate, enc
 ### CLI Usage
 
 ```bash
-plantmcp validate <path>           # validate .puml file
-plantmcp encode <path>             # encode .puml file → encoded string
-plantmcp decode <encoded-string>   # decode string → PlantUML source
+plantmcp validate <path>                    # validate .puml file
+plantmcp encode <path>                      # encode .puml file → encoded string
+plantmcp decode <encoded-string>            # decode string → PlantUML source
+plantmcp render <input-path> <output-path>  # render .puml file → SVG file
 ```
 
 ---
@@ -133,3 +148,4 @@ plantmcp decode <encoded-string>   # decode string → PlantUML source
 - **Minimal dependencies** — PlantUML, MCP SDK, JUnit, SLF4J only
 - Ask permissions before changing `pom.xml`
 - Use `./mvnw` (or `mvnw.cmd`) for all build/test commands
+- **After every change**: update `AGENTS.md` and `README.md` to reflect new tools, classes, packages, CLI commands, or architecture changes — keep them in sync with the code

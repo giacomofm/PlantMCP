@@ -6,20 +6,22 @@ MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library
 
 ## Tools
 
-| Tool         | Input           | Output                                                           |
-|--------------|-----------------|------------------------------------------------------------------|
-| `validation` | PlantUML source | `"Schema is valid"` or syntax errors                             |
-| `encode`     | PlantUML source | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
-| `decode`     | Encoded string  | PlantUML source                                                  |
+| Tool         | Input                              | Output                                                           |
+|--------------|------------------------------------|------------------------------------------------------------------|
+| `validation` | `data`: PlantUML source            | `"Schema is valid"` or syntax errors                             |
+| `encode`     | `data`: PlantUML source            | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
+| `decode`     | `data`: Encoded string             | PlantUML source                                                  |
+| `render`     | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path |
 
-All tools accept a `data` string parameter and return `isError` flag on failure.
+All tools accept a `data` string parameter and return `isError` flag on failure. `render` also requires a `path` parameter.
 
 ## CLI
 
 ```bash
-plantmcp validate <path>          # validate .puml file
-plantmcp encode <path>            # encode .puml → encoded string
-plantmcp decode <encoded-string>  # decode string → PlantUML source
+plantmcp validate <path>                       # validate .puml file
+plantmcp encode <path>                         # encode .puml → encoded string
+plantmcp decode <encoded-string>               # decode string → PlantUML source
+plantmcp render <input-path> <output-path>     # render .puml → SVG file
 ```
 
 Exit codes: `0` success · `1` internal error · `2` user error · `3` validation failed
