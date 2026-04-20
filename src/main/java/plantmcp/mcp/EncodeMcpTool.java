@@ -18,6 +18,25 @@ class EncodeMcpTool extends CustomMcpTool {
 	}
 
 	@Override
+	protected String description() {
+		return """
+				Encode PlantUML source text to a compressed, URL-safe string.
+
+				Input:
+				- data: PlantUML source (string). Should be valid — run `validation` first.
+
+				Output:
+				- isError=false: encoded string (Deflate + custom base64).
+				  Use it to build a shareable URL: https://www.plantuml.com/plantuml/uml/<encoded>
+				- isError=true: error message if encoding fails.
+
+				Notes:
+				- Always validate the source before encoding.
+				- Encoding invalid source may produce a string, but the diagram will not render correctly.
+				""".trim();
+	}
+
+	@Override
 	protected BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler() {
 		return (_, req) -> {
 			var data = req.arguments().get("data");

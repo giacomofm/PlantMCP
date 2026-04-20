@@ -18,6 +18,25 @@ class DecodeMcpTool extends CustomMcpTool {
 	}
 
 	@Override
+	protected String description() {
+		return """
+				Decode a PlantUML encoded string back to the original source text.
+
+				Input:
+				- data: a PlantUML encoded string, as returned by the `encode` tool or extracted
+				  from a PlantUML URL (https://www.plantuml.com/plantuml/uml/<encoded>).
+
+				Output:
+				- isError=false: the original PlantUML source text (@startuml ... @enduml).
+				- isError=true: error message if the encoded string is invalid or cannot be decoded.
+
+				Notes:
+				- Use this tool when the user provides a PlantUML URL or encoded string and wants
+				  to view or edit the underlying diagram source.
+				""".trim();
+	}
+
+	@Override
 	protected BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler() {
 		return (_, req) -> {
 			var data = req.arguments().get("data");
