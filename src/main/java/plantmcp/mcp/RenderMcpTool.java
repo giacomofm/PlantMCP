@@ -26,6 +26,10 @@ class RenderMcpTool extends CustomMcpTool {
 		return """
 				Render PlantUML source text to an SVG file saved on disk.
 				
+				IMPORTANT: Only call this tool when the user explicitly requests saving or exporting an SVG file.
+				- Creating or generating a diagram means producing PlantUML source text only
+				— do NOT render unless the user specifically asks for a file output.
+				
 				Input:
 				- data: PlantUML source (string). Should be valid — run `validation` first.
 				- path: output file path (string) where the SVG will be written.

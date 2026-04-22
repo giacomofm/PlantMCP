@@ -68,6 +68,8 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 
 All tools accept a `data` parameter (required, type `string`). `render` also requires a `path` parameter. All return `McpSchema.CallToolResult` with `isError` flag.
 
+> **Creating vs Rendering:** "Create" or "generate" a diagram always means producing PlantUML source text only. `render` must **never** be called automatically — it is opt-in and triggered only when the user explicitly requests SVG file output.
+
 ### `validation` — Validate PlantUML source
 
 | Input                          | Output (success)    | Output (error)                    |
