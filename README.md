@@ -24,14 +24,15 @@ _Tested on GitHub Copilot_
 
 ## Tools
 
-| Tool         | Input                                        | Output                                                           |
-|--------------|----------------------------------------------|------------------------------------------------------------------|
-| `validation` | `data`: PlantUML source                      | `"Schema is valid"` or syntax errors                             |
-| `encode`     | `data`: PlantUML source                      | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
-| `decode`     | `data`: Encoded string                       | PlantUML source                                                  |
-| `render`     | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path     |
+| Tool              | Input                                        | Output                                                           |
+|-------------------|----------------------------------------------|------------------------------------------------------------------|
+| `validate_source` | `data`: PlantUML source                      | `"Schema is valid"` or syntax errors                             |
+| `validate_file`   | `path`: path to .puml file                   | `"Schema is valid"` or syntax errors                             |
+| `encode`          | `data`: PlantUML source                      | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
+| `decode`          | `data`: Encoded string                       | PlantUML source                                                  |
+| `render`          | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path     |
 
-All tools accept a `data` string parameter and return `isError` flag on failure. `render` also requires a `path` parameter.
+`validate_source` and `encode`/`decode`/`render` accept a `data` string parameter. `validate_file` and `render` also accept a `path` parameter. All return an `isError` flag on failure.
 
 ## CLI
 

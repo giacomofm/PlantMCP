@@ -23,7 +23,8 @@ public final class ServerMcpApp {
 		// Sync tool specification
 		var syncToolSpecification = List.of(
 				//@formatter:off
-				new ValidationMcpTool().build(),
+				new ValidateSourceMcpTool().build(),
+				new ValidateFileMcpTool().build(),
 				new EncodeMcpTool().build(),
 				new DecodeMcpTool().build(),
 				new RenderMcpTool().build()
@@ -56,17 +57,19 @@ public final class ServerMcpApp {
 			
 			## Available Tools
 			
-			| Tool         | Purpose                                               |
-			|--------------|-------------------------------------------------------|
-			| `validation` | Validate PlantUML source and get syntax diagnostics   |
-			| `encode`     | Encode PlantUML source to a shareable URL-safe string |
-			| `decode`     | Decode an encoded string back to PlantUML source      |
-			| `render`     | Render PlantUML source to an SVG file on disk         |
+			| Tool              | Purpose                                               |
+			|-------------------|-------------------------------------------------------|
+			| `validate_source` | Validate PlantUML source text and get syntax errors   |
+			| `validate_file`   | Validate a PlantUML file on disk by path              |
+			| `encode`          | Encode PlantUML source to a shareable URL-safe string |
+			| `decode`          | Decode an encoded string back to PlantUML source      |
+			| `render`          | Render PlantUML source to an SVG file on disk         |
 			
 			## When to Use These Tools
 			
-			- User asks to **create or generate** any diagram → produce PlantUML source text (NO rendering) → call `validation`
-			- User asks to **validate** PlantUML source text → call `validation`
+			- User asks to **create or generate** any diagram → produce PlantUML source text (NO rendering) → call `validate_source`
+			- User asks to **validate** PlantUML source text → call `validate_source`
+			- User asks to **validate** a PlantUML file on disk → call `validate_file` with the file path
 			- User wants a **shareable link** or encoded string → call `encode`
 			- User provides an **encoded PlantUML string** and wants to view or edit the source → call `decode`
 			- User asks to **fix** or **correct** a PlantUML diagram → produce corrected PlantUML source text (NO rendering)
@@ -77,20 +80,26 @@ public final class ServerMcpApp {
 			Always follow this loop when generating PlantUML diagrams:
 			
 			1. **Draft** the PlantUML source (`@startuml ... @enduml`)
-			2. **Call `validation`** with the draft source
+			2. **Call `validate_source`** with the draft source
 			3. If `isError=true`: read the error list, fix the source, go back to step 2
-			4. Repeat until `validation` returns `isError=false` ("Schema is valid")
+			4. Repeat until `validate_source` returns `isError=false` ("Schema is valid")
 			5. **Present the validated PlantUML source to the user** — this is the final output
 			6. Optionally **call `encode`** only if the user asks for a shareable string or URL
 			7. Optionally **call `render`** only if the user explicitly asks to save an SVG file
 			
 			## Tool Usage Details
 			
-			### `validation`
+			### `validate_source`
 			- Input `data`: full PlantUML source, typically starting with `@startuml` and ending with `@enduml`
 			- On success: returns `"Schema is valid"` (isError=false)
 			- On failure: returns a list of parser error messages (isError=true); use these to fix the source
 			- Use this tool proactively — call it on every draft before showing or encoding
+			
+			### `validate_file`
+			- Input `path`: absolute or relative path to a `.puml` file on disk
+			- On success: returns `"Schema is valid"` (isError=false)
+			- On failure: returns a list of parser error messages (isError=true), or a file-not-found error
+			- Use this tool when the user refers to a file rather than pasting source text
 			
 			### `encode`
 			- Input `data`: valid PlantUML source (validate first!)
@@ -114,18 +123,22 @@ public final class ServerMcpApp {
 			
 			**User: "Create a sequence diagram showing login flow"**
 			1. Draft PlantUML source for the sequence diagram
-			2. Call `validation` → fix any errors → repeat until valid
+			2. Call `validate_source` → fix any errors → repeat until valid
 			3. Present the final PlantUML source to the user
 			→ DO NOT call `render`. Source text is the complete response.
 			
 			**User: "Create a sequence diagram and save it as login.svg"**
 			1. Draft PlantUML source for the sequence diagram
-			2. Call `validation` → fix any errors → repeat until valid
+			2. Call `validate_source` → fix any errors → repeat until valid
 			3. Call `render` with the source and path `login.svg`
 			4. Confirm the file has been saved
 			
 			**User: "Is this PlantUML valid? @startuml ... @enduml"**
-			1. Call `validation` with the provided source
+			1. Call `validate_source` with the provided source
+			2. If valid: confirm to user; if not: report the specific errors
+			
+			**User: "Validate the file at /home/user/diagram.puml"**
+			1. Call `validate_file` with path `/home/user/diagram.puml`
 			2. If valid: confirm to user; if not: report the specific errors
 			
 			**User: "What does this encoded diagram look like? SyfFKj2rKt3..."**
@@ -133,19 +146,19 @@ public final class ServerMcpApp {
 			2. Present the PlantUML source to the user
 			
 			**User: "Give me a shareable link for this diagram"**
-			1. Call `validation` first to ensure source is valid
+			1. Call `validate_source` first to ensure source is valid
 			2. Call `encode` to get the encoded string
 			3. Return: `https://www.plantuml.com/plantuml/uml/<encoded>`
 			
 			**User: "Save this diagram as an SVG file"**
-			1. Call `validation` first to ensure source is valid
+			1. Call `validate_source` first to ensure source is valid
 			2. Call `render` with the source and the desired output path
 			3. Confirm the file has been saved
 			
 			## Notes
 			
 			- Always validate before encoding or rendering — invalid source may produce incorrect output
-			- When fixing errors, use the exact error messages returned by `validation` to guide corrections
+			- When fixing errors, use the exact error messages returned by `validate_source` to guide corrections
 			- PlantUML diagrams must start with `@startuml` and end with `@enduml`
 			- Supported diagram types: sequence, class, activity, state, component, object, ER, Gantt, mindmap, WBS, salt (UI mockups), and more
 			""";

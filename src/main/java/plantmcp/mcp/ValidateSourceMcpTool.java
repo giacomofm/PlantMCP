@@ -5,16 +5,16 @@ import io.modelcontextprotocol.spec.McpSchema;
 
 import java.util.function.BiFunction;
 
-class ValidationMcpTool extends CustomMcpTool {
+class ValidateSourceMcpTool extends CustomMcpTool {
 
 	@Override
 	protected String name() {
-		return "validation";
+		return "validate_source";
 	}
 
 	@Override
 	protected String title() {
-		return "Validate the PlantUml schema";
+		return "Validate PlantUML source text";
 	}
 
 	@Override
@@ -39,10 +39,10 @@ class ValidationMcpTool extends CustomMcpTool {
 		return (_, req) -> {
 			var data = req.arguments().get("data");
 
-			log.debug("Received validation request with data: {}", data);
+			log.debug("Received validate_source request with data: {}", data);
 
 			if (data instanceof String strData) {
-				return validatePlantUmlSchema(strData);
+				return validatePlantUmlSource(strData);
 			}
 
 			return McpSchema.CallToolResult.builder()
@@ -52,7 +52,7 @@ class ValidationMcpTool extends CustomMcpTool {
 		};
 	}
 
-	private McpSchema.CallToolResult validatePlantUmlSchema(String data) {
+	private McpSchema.CallToolResult validatePlantUmlSource(String data) {
 		try {
 			var errors = engine.getErrors(data);
 

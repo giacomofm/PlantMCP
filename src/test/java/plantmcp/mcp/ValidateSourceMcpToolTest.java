@@ -9,14 +9,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidationMcpToolTest {
+class ValidateSourceMcpToolTest {
 
-	private static final ValidationMcpTool tool = new ValidationMcpTool();
+	private static final ValidateSourceMcpTool tool = new ValidateSourceMcpTool();
 
 	@Test
 	void validDiagram_returnsOk() {
 		var args = Map.of("data", (Object) TestUtils.VALID_DIAGRAM);
-		var req = McpSchema.CallToolRequest.builder().name("test-validation").arguments(args).build();
+		var req = McpSchema.CallToolRequest.builder().name("test-validate-source").arguments(args).build();
 		var res = tool.handler().apply(null, req);
 
 		assertFalse(res.isError(), "Expected no error for valid diagram");
@@ -32,7 +32,7 @@ class ValidationMcpToolTest {
 	@Test
 	void invalidArgs_returnError() {
 		var args = Map.of("data", (Object) 0);
-		var req = McpSchema.CallToolRequest.builder().name("test-validation").arguments(args).build();
+		var req = McpSchema.CallToolRequest.builder().name("test-validate-source").arguments(args).build();
 		var res = tool.handler().apply(null, req);
 
 		assertTrue(res.isError(), "Expected error for non-string input");
@@ -49,7 +49,7 @@ class ValidationMcpToolTest {
 	void nullArgs_returnError() {
 		var args = new HashMap<String, Object>();
 		args.put("data", null);
-		var req = McpSchema.CallToolRequest.builder().name("test-validation").arguments(args).build();
+		var req = McpSchema.CallToolRequest.builder().name("test-validate-source").arguments(args).build();
 		var res = tool.handler().apply(null, req);
 
 		assertTrue(res.isError(), "Expected error for null input");
@@ -65,7 +65,7 @@ class ValidationMcpToolTest {
 	@Test
 	void emptyStringArgs_returnError() {
 		var args = Map.of("data", (Object) "");
-		var req = McpSchema.CallToolRequest.builder().name("test-validation").arguments(args).build();
+		var req = McpSchema.CallToolRequest.builder().name("test-validate-source").arguments(args).build();
 		var res = tool.handler().apply(null, req);
 
 		assertTrue(res.isError(), "Expected error for empty string input");
