@@ -113,6 +113,15 @@ public final class ServerMcpApp {
 			- The SVG content is NOT returned to the model — it is saved directly to disk
 			- **Only call this when the user explicitly requests SVG file output**
 			
+			## Docker / Container Mode
+			
+			When running inside a Docker container, all file operations (`validate` with `path`, `render`)
+			are rooted at `/data`. To ensure files are accessible:
+			- Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`),
+			  not absolute or relative paths with directories.
+			- Mount your working directory to `/data` when starting the container:
+			  `docker run --rm -i -v .:/data plantmcp`
+			
 			## Example Scenarios
 			
 			**User: "Create a sequence diagram showing login flow"**

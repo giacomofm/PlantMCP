@@ -6,7 +6,8 @@ MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library
 
 ## Quick Start
 
-**You need Java 25 to run the server.**  
+### With Java 25
+
 Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/PlantMCP/releases/tag/latest) and add it to your MCP client config:
 
 ```json
@@ -20,6 +21,45 @@ Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/P
   }
 }
 ```
+
+### With Docker
+
+No Java required. Build the image and point your MCP client to it:
+
+```bash
+docker build -t plantmcp .
+```
+
+```json
+{
+  "mcpServers": {
+    "PlantMCP": {
+      "type": "local",
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "plantmcp"]
+    }
+  }
+}
+```
+
+#### File I/O inside a container
+
+When running in Docker, all file operations (`validate` with `path`, `render`) are rooted at `/data`. Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`) — not absolute or relative paths with directories. Mount your working directory to `/data`:
+
+```json
+{
+  "mcpServers": {
+    "PlantMCP": {
+      "type": "local",
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "-v", ".:/data", "plantmcp"]
+    }
+  }
+}
+```
+
+Place your `.puml` input files in the mounted directory before calling `validate` or `render`; rendered SVG files will appear there as well.
+
 _Tested on GitHub Copilot_
 
 ## Tools

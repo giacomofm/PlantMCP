@@ -35,12 +35,14 @@ class RenderMcpTool extends CustomMcpTool {
 				- path: output file path (string) where the SVG will be written.
 				
 				Output:
-				- isError=false: confirmation message with the path of the saved file.
+				- isError=false: confirmation message with the absolute path of the saved file.
 				- isError=true: error message if rendering or writing fails.
 				
 				Notes:
 				- The SVG file is written to disk at the specified path.
 				- Always validate the source before rendering.
+				- When running inside a Docker container, use just the filename (e.g. `diagram.svg`),
+				  not an absolute path. Mount your working directory to /data when starting the container.
 				""".trim();
 	}
 
@@ -83,7 +85,7 @@ class RenderMcpTool extends CustomMcpTool {
 	private McpSchema.CallToolResult renderToSvg(String data, String path) {
 		try {
 			String svg = engine.renderSvg(data);
-			var outputPath = Path.of(path);
+			var outputPath = Path.of(EnvironmentUtils.resolvePath(path));
 			Files.writeString(outputPath, svg);
 			return McpSchema.CallToolResult.builder()
 					.addTextContent("SVG saved to " + outputPath.toAbsolutePath())

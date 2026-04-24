@@ -38,6 +38,8 @@ class ValidateMcpTool extends CustomMcpTool {
 				Notes:
 				- Validation only (no rendering).
 				- Use this tool when the user refers to a file on disk rather than pasting source text.
+				- When running inside a Docker container, use just the filename (e.g. `diagram.puml`),
+				  not an absolute path. Mount your working directory to /data when starting the container.
 				""".trim();
 	}
 
@@ -89,7 +91,7 @@ class ValidateMcpTool extends CustomMcpTool {
 
 	private McpSchema.CallToolResult validateFile(String path) {
 		try {
-			String source = Files.readString(Path.of(path));
+			String source = Files.readString(Path.of(EnvironmentUtils.resolvePath(path)));
 			return validate(source);
 		} catch (IOException e) {
 			log.warn("Error reading file for validation", e);
