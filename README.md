@@ -44,7 +44,7 @@ docker build -t plantmcp .
 
 #### File I/O inside a container
 
-When running in Docker, all file operations (`validate` with `path`, `render`) are rooted at `/data`. Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`) — not absolute or relative paths with directories. Mount your working directory to `/data`:
+When running in Docker, `/data` is your project directory — the host directory you mount via `-v`. All file operations (`validate` with `path`, `render`) are rooted there. Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`) — not absolute or relative paths with directories. Mount your working directory to `/data`:
 
 ```json
 {
@@ -58,7 +58,7 @@ When running in Docker, all file operations (`validate` with `path`, `render`) a
 }
 ```
 
-Place your `.puml` input files in the mounted directory before calling `validate` or `render`; rendered SVG files will appear there as well.
+Place your `.puml` input files in the mounted directory before calling `validate` or `render`. Rendered SVG files will appear in the same directory.
 
 _Tested on GitHub Copilot_
 

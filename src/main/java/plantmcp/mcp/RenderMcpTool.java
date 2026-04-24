@@ -41,8 +41,10 @@ class RenderMcpTool extends CustomMcpTool {
 				Notes:
 				- The SVG file is written to disk at the specified path.
 				- Always validate the source before rendering.
-				- When running inside a Docker container, use just the filename (e.g. `diagram.svg`),
-				  not an absolute path. Mount your working directory to /data when starting the container.
+				- When running in a Docker container: the output is written to /data/<filename>, which is
+				  the project root directory. Treat /data as `.` to move files after rendering
+				  (e.g. `mv ./output.svg /data/subdir/my-diagram.svg`). Use just the filename for `path`
+				  (e.g. `output.svg`), not a full path.
 				""".trim();
 	}
 

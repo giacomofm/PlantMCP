@@ -38,8 +38,9 @@ class ValidateMcpTool extends CustomMcpTool {
 				Notes:
 				- Validation only (no rendering).
 				- Use this tool when the user refers to a file on disk rather than pasting source text.
-				- When running inside a Docker container, use just the filename (e.g. `diagram.puml`),
-				  not an absolute path. Mount your working directory to /data when starting the container.
+				- When using `path` in a Docker container: /data is the project root directory.
+				  Only files at the project root are accessible — provide just the filename (e.g. `diagram.puml`),
+				  not a full path.
 				""".trim();
 	}
 

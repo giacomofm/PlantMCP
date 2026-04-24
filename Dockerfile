@@ -1,7 +1,7 @@
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /build
 COPY . .
-RUN ./mvnw -B package -DskipTests
+RUN ./mvnw -B package
 
 FROM eclipse-temurin:25-jre
 RUN mkdir /data

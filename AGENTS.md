@@ -75,12 +75,7 @@ docker build -t plantmcp .
 
 ### Docker / Container Mode
 
-When running inside a Docker container, all file operations (`validate` with `path`, `render`) are rooted at `/data`. Recommendations:
-- Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`), not absolute or relative paths with directories.
-- Mount your working directory to `/data`:
-  ```bash
-  docker run --rm -i -v .:/data plantmcp
-  ```
+When running inside a Docker container, `/data` is the project root directory (the host directory mounted via `-v .:/data`). All file operations (`validate` with `path`, `render`) resolve paths relative to `/data`. The tool descriptions already convey this to MCP agents; no extra handling is needed in code.
 
 ### `validate` — Validate PlantUML source text or file
 
