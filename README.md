@@ -24,15 +24,14 @@ _Tested on GitHub Copilot_
 
 ## Tools
 
-| Tool              | Input                                        | Output                                                           |
-|-------------------|----------------------------------------------|------------------------------------------------------------------|
-| `validate_source` | `data`: PlantUML source                      | `"Schema is valid"` or syntax errors                             |
-| `validate_file`   | `path`: path to .puml file                   | `"Schema is valid"` or syntax errors                             |
-| `encode`          | `data`: PlantUML source                      | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
-| `decode`          | `data`: Encoded string                       | PlantUML source                                                  |
-| `render`          | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path     |
+| Tool       | Input                                        | Output                                                           |
+|------------|----------------------------------------------|------------------------------------------------------------------|
+| `validate` | `data`: PlantUML source OR `path`: file path | `"Schema is valid"` or syntax errors                             |
+| `encode`   | `data`: PlantUML source                      | Encoded string (usable in `plantuml.com/plantuml/uml/<encoded>`) |
+| `decode`   | `data`: Encoded string                       | PlantUML source                                                  |
+| `render`   | `data`: PlantUML source, `path`: output path | SVG written to disk; returns confirmation with absolute path     |
 
-`validate_source` and `encode`/`decode`/`render` accept a `data` string parameter. `validate_file` and `render` also accept a `path` parameter. All return an `isError` flag on failure.
+`validate` accepts either `data` (PlantUML source text) or `path` (file path) — exactly one must be provided. `encode`/`decode`/`render` accept a `data` string parameter. `render` also accepts a `path` parameter. All return an `isError` flag on failure.
 
 ## CLI
 

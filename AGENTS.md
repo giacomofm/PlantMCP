@@ -8,11 +8,10 @@
 
 ```
 Main → ServerMcpApp → McpSyncServer (stdio transport)
-                          ├── ValidateSourceMcpTool  (validate PlantUML source text)
-                          ├── ValidateFileMcpTool    (validate PlantUML file by path)
-                          ├── EncodeMcpTool          (source → encoded string)
-                          ├── DecodeMcpTool          (encoded string → source)
-                          └── RenderMcpTool          (source + path → SVG file on disk)
+                          ├── ValidateMcpTool    (validate PlantUML source text or file by path)
+                          ├── EncodeMcpTool      (source → encoded string)
+                          ├── DecodeMcpTool      (encoded string → source)
+                          └── RenderMcpTool      (source + path → SVG file on disk)
 
 All tools extend CustomMcpTool → delegates to PlantEngine
 ```
@@ -28,16 +27,15 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 
 **Key classes:**
 
-| Class                  | Role                                                           |
-|------------------------|----------------------------------------------------------------|
-| `ServerMcpApp`         | Bootstraps `McpSyncServer`, registers all tools, starts stdio  |
-| `CustomMcpTool`        | Abstract base — provides schema, logging, `PlantEngine` access |
-| `ValidateSourceMcpTool`| MCP tool: validates PlantUML source text for syntax errors     |
-| `ValidateFileMcpTool`  | MCP tool: validates a PlantUML file on disk by path            |
-| `EncodeMcpTool`        | MCP tool: encodes PlantUML source to shareable string          |
-| `DecodeMcpTool`        | MCP tool: decodes encoded string back to PlantUML source       |
-| `RenderMcpTool`        | MCP tool: renders PlantUML source to SVG file on disk          |
-| `PlantEngine`          | Wraps PlantUML library (`getErrors`, `encode`, `decode`, `renderSvg`) |
+| Class           | Role                                                           |
+|-----------------|----------------------------------------------------------------|
+| `ServerMcpApp`  | Bootstraps `McpSyncServer`, registers all tools, starts stdio  |
+| `CustomMcpTool` | Abstract base — provides schema, logging, `PlantEngine` access |
+| `ValidateMcpTool` | MCP tool: validates PlantUML source text or file on disk (`data` xor `path`) |
+| `EncodeMcpTool` | MCP tool: encodes PlantUML source to shareable string          |
+| `DecodeMcpTool` | MCP tool: decodes encoded string back to PlantUML source       |
+| `RenderMcpTool` | MCP tool: renders PlantUML source to SVG file on disk          |
+| `PlantEngine`   | Wraps PlantUML library (`getErrors`, `encode`, `decode`, `renderSvg`) |
 
 ### Tech Stack
 
@@ -68,29 +66,20 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 
 ## MCP Tools
 
-`validate_source`, `encode`, `decode`, and `render` accept a `data` parameter (required, type `string`). `validate_file` accepts a `path` parameter (required, type `string`). `render` requires both `data` and `path`. All return `McpSchema.CallToolResult` with `isError` flag.
+`validate`, `encode`, `decode`, and `render` accept a `data` parameter (type `string`). `validate` and `render` also accept a `path` parameter (type `string`). For `validate`, exactly one of `data` or `path` must be provided. `render` requires both. All return `McpSchema.CallToolResult` with `isError` flag.
 
 > **Creating vs Rendering:** "Create" or "generate" a diagram always means producing PlantUML source text only. `render` must **never** be called automatically — it is opt-in and triggered only when the user explicitly requests SVG file output.
 
-### `validate_source` — Validate PlantUML source text
+### `validate` — Validate PlantUML source text or file
 
-| Input                          | Output (success)    | Output (error)                    |
-|--------------------------------|---------------------|-----------------------------------|
-| `data`: PlantUML source string | `"Schema is valid"` | List of syntax errors from parser |
-
-**Error handling:**
-- Non-string / null input → `isError: true`, `"Invalid input data. Expected a string."`
-- Empty string → `isError: true`, `"No diagram found in source"`
-- Parse exception → `isError: true`, `"An error occurred during validation: <message>"`
-
-### `validate_file` — Validate a PlantUML file by path
-
-| Input                       | Output (success)    | Output (error)                          |
-|-----------------------------|---------------------|-----------------------------------------|
-| `path`: path to `.puml` file | `"Schema is valid"` | List of syntax errors, or file-not-found error |
+| Input                                              | Output (success)    | Output (error)                    |
+|----------------------------------------------------|---------------------|-----------------------------------|
+| `data`: PlantUML source string (xor `path`)        | `"Schema is valid"` | List of syntax errors from parser |
+| `path`: path to `.puml` file on disk (xor `data`) | `"Schema is valid"` | List of syntax errors, or file-not-found error |
 
 **Error handling:**
-- Non-string / null input → `isError: true`, `"Invalid input data. Expected a string."`
+- Both `data` and `path` provided → `isError: true`, `"Provide either 'data' or 'path', not both."`
+- Neither provided / non-string / null → `isError: true`, `"Invalid input data. Expected 'data' (source string) or 'path' (file path)."`
 - File not found → `isError: true`, `"File not found: <path>"`
 - Parse/I/O exception → `isError: true`, `"An error occurred during validation: <message>"`
 

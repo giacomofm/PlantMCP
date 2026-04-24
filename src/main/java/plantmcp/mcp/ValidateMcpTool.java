@@ -3,36 +3,37 @@ package plantmcp.mcp;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-class ValidateFileMcpTool extends CustomMcpTool {
+class ValidateMcpTool extends CustomMcpTool {
 
 	@Override
 	protected String name() {
-		return "validate_file";
+		return "validate";
 	}
 
 	@Override
 	protected String title() {
-		return "Validate a PlantUML file by path";
+		return "Validate PlantUML source text or file";
 	}
 
 	@Override
 	protected String description() {
 		return """
-				Validate a PlantUML file from disk and return syntax diagnostics.
+				Validate PlantUML source text and return syntax diagnostics.
 				
-				Input:
+				Input (provide exactly one):
+				- data: PlantUML source (string). Typically includes @startuml ... @enduml.
 				- path: absolute or relative path to a .puml file (string).
 				
 				Output:
-				- isError=false: text "Schema is valid" when no errors occur.
-				- isError=true: list of parser errors, or a general error message.
+				- isError=false: text "Schema is valid" when no errors occurs.
+				- isError=true: w/ possible list of parser errors or a general error message.
 				
 				Notes:
 				- Validation only (no rendering).
@@ -45,8 +46,11 @@ class ValidateFileMcpTool extends CustomMcpTool {
 		return new McpSchema.JsonSchema(
 				//@formatter:off
 				"object",
-				Map.of("path", Map.of("type", "string")),
-				List.of("path"),
+				Map.of(
+						"data", Map.of("type", "string"),
+						"path", Map.of("type", "string")
+				),
+				List.of(),
 				false,
 				null,
 				null
@@ -57,42 +61,61 @@ class ValidateFileMcpTool extends CustomMcpTool {
 	@Override
 	protected BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler() {
 		return (_, req) -> {
+			var data = req.arguments().get("data");
 			var path = req.arguments().get("path");
 
-			log.debug("Received validate_file request with path: {}", path);
+			log.debug("Received validate request with path: {}, data: {}", path, data);
 
-			if (!(path instanceof String strPath)) {
+			boolean hasData = data instanceof String;
+			boolean hasPath = path instanceof String;
+			if (hasData && hasPath) {
 				return McpSchema.CallToolResult.builder()
 						.isError(true)
-						.addTextContent("Invalid input data. Expected a string.")
+						.addTextContent("Provide either 'data' or 'path', not both.")
 						.build();
 			}
-
-			return validateFile(strPath);
+			if (hasData) {
+				return validate((String) data);
+			}
+			if (hasPath) {
+				return validateFile((String) path);
+			}
+			return McpSchema.CallToolResult.builder()
+					.isError(true)
+					.addTextContent("Invalid input data. Expected 'data' (source string) or 'path' (file path).")
+					.build();
 		};
 	}
 
 	private McpSchema.CallToolResult validateFile(String path) {
 		try {
 			String source = Files.readString(Path.of(path));
-			var errors = engine.getErrors(source);
+			return validate(source);
+		} catch (IOException e) {
+			log.warn("Error reading file for validation", e);
 
+			return McpSchema.CallToolResult.builder()
+					.isError(true)
+					.addTextContent("An error occurred while reading file: " + path)
+					.build();
+		}
+	}
+
+	private McpSchema.CallToolResult validate(String data) {
+		try {
+			var errors = engine.getErrors(data);
 			if (errors.isEmpty()) {
 				return McpSchema.CallToolResult.builder().addTextContent("Schema is valid").build();
 			}
-
 			return McpSchema.CallToolResult.builder().isError(true).textContent(errors).build();
-		} catch (NoSuchFileException e) {
-			return McpSchema.CallToolResult.builder()
-					.isError(true)
-					.addTextContent("File not found: " + path)
-					.build();
 		} catch (Exception e) {
-			log.warn("Error during file validation", e);
+			log.warn("Error during source validation", e);
+
 			return McpSchema.CallToolResult.builder()
 					.isError(true)
 					.addTextContent("An error occurred during validation: " + e.getMessage())
 					.build();
 		}
 	}
+
 }
