@@ -44,7 +44,9 @@ docker build -t plantmcp .
 
 #### File I/O inside a container
 
-When running in Docker, `/data` is your project directory — the host directory you mount via `-v`. All file operations (`validate` with `path`, `render`) are rooted there. Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`) — not absolute or relative paths with directories. Mount your working directory to `/data`:
+When running in Docker, i suggest you mount it with `-v .:/data` so that your project directory is accessible to the tool.  
+All file operations (`validate` with `path`, `render`) are rooted there for the moment.  
+To configure your MCP client, just update the `args` to include the volume mount:
 
 ```json
 {
