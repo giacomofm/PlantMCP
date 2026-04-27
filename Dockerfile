@@ -1,7 +1,7 @@
-FROM eclipse-temurin:25-jdk AS build
+FROM maven:3-eclipse-temurin-25 AS build
 WORKDIR /build
 COPY . .
-RUN ./mvnw -B package
+RUN mvn -B package
 
 FROM eclipse-temurin:25-jre
 RUN mkdir /data

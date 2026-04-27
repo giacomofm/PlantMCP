@@ -3,7 +3,8 @@
 _Tested on GitHub Copilot w/ `Sonet`/`Opus` `4.6`_  
 _(I'm still testing functionality and tools, feedbacks are welcome)_
 
-MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library
+**MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library**  
+PlantMCP exposes PlantUML as a set of MCP tools that any compatible AI agent can call directly: validate diagram syntax, encode/decode diagram source, and render SVG files to disk without leaving the agent workflow.
 
 ## Quick Start
 
@@ -27,7 +28,8 @@ Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/P
 
 _!!WARN!! You have more restrictions on file I/O when running in container mode._
 
-No Java required, get the latest image from Docker Hub and add it to your MCP client config.  
+No Java required, get the latest image from [GitHub Packages](https://github.com/giacomofm/PlantMCP/pkgs/container/plantmcp) and add it to your MCP client config.
+
 When running in Docker, I suggest you mount it with `-v .:/data` so that your project root directory is accessible to the tool.  
 All file operations (`validate` with `path`, `render`) are rooted there for the moment.  
 To configure your MCP client by setting `args` like this:
@@ -43,7 +45,7 @@ To configure your MCP client by setting `args` like this:
         "--rm",
         "-i",
         "-v", ".:/data",
-        "plantmcp"
+        "ghcr.io/giacomofm/plantmcp:latest"
       ]
     }
   }
