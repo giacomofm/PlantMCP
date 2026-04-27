@@ -7,7 +7,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: $(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
+#  Would be nice, but must be run
+#  IMAGE_NAME: $(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
 
 jobs:
   release:
@@ -17,6 +18,10 @@ jobs:
       packages: write
 
     steps:
+      - name: Lowercase image name
+        run: |
+          echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v6
 
