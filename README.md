@@ -1,6 +1,7 @@
 # PlantMCP
 
-_(Still in early development, I'm testing functionality and tools, feedbacks are welcome)_
+_Tested on GitHub Copilot w/ `Sonet`/`Opus` `4.6`_  
+_(I'm still testing functionality and tools, feedbacks are welcome)_
 
 MCP Server for PlantUML - Fully based on Java MCP SDK and PlantUML library
 
@@ -24,29 +25,12 @@ Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/P
 
 ### With Docker
 
-No Java required. Build the image and point your MCP client to it:
+_!!WARN!! You have more restrictions on file I/O when running in container mode._
 
-```bash
-docker build -t plantmcp .
-```
-
-```json
-{
-  "mcpServers": {
-    "PlantMCP": {
-      "type": "local",
-      "command": "docker",
-      "args": ["run", "--rm", "-i", "plantmcp"]
-    }
-  }
-}
-```
-
-#### File I/O inside a container
-
-When running in Docker, i suggest you mount it with `-v .:/data` so that your project directory is accessible to the tool.  
+No Java required, get the latest image from Docker Hub and add it to your MCP client config.  
+When running in Docker, I suggest you mount it with `-v .:/data` so that your project root directory is accessible to the tool.  
 All file operations (`validate` with `path`, `render`) are rooted there for the moment.  
-To configure your MCP client, just update the `args` to include the volume mount:
+To configure your MCP client by setting `args` like this:
 
 ```json
 {
@@ -54,15 +38,19 @@ To configure your MCP client, just update the `args` to include the volume mount
     "PlantMCP": {
       "type": "local",
       "command": "docker",
-      "args": ["run", "--rm", "-i", "-v", ".:/data", "plantmcp"]
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-v", ".:/data",
+        "plantmcp"
+      ]
     }
   }
 }
 ```
 
 Place your `.puml` input files in the mounted directory before calling `validate` or `render`. Rendered SVG files will appear in the same directory.
-
-_Tested on GitHub Copilot_
 
 ## Tools
 
