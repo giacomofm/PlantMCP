@@ -47,12 +47,11 @@ public final class ServerMcpApp {
 			This server provides tools to create, validate, encode, decode, and render PlantUML diagrams.
 			Use these tools whenever the user asks to generate, check, or share any PlantUML diagram.
 			
-			## CRITICAL RULE — Creating vs Rendering
+			## CRITICAL RULE
 			
 			**Creating / generating a diagram always means producing PlantUML source text ONLY.**
-			- DO NOT call `render` unless the user explicitly asks to save or export an SVG file.
 			- Default output of any "create", "generate", "make", "show me", or "write" request is the PlantUML source text — nothing more.
-			- `render` is an opt-in operation triggered only by explicit user intent (e.g. "save as SVG", "render to disk").
+			- `render` is an opt-in operation triggered only by explicit user intent.
 			
 			## Available Tools
 			
