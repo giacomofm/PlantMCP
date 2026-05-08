@@ -32,24 +32,24 @@ class EnvironmentUtilsTest {
 	@Test
 	void insideDocker_simpleFilename_prependsDataDir() {
 		System.setProperty(EnvironmentUtils.ENV_VAR, "true");
-		assertEquals("/data/diagram.svg", EnvironmentUtils.resolvePath("diagram.svg"));
+		assertEquals("/data/plantmcp/diagram.svg", EnvironmentUtils.resolvePath("diagram.svg"));
 	}
 
 	@Test
 	void insideDocker_absolutePath_stripsDirectoryAndPrependsDataDir() {
 		System.setProperty(EnvironmentUtils.ENV_VAR, "true");
-		assertEquals("/data/diagram.svg", EnvironmentUtils.resolvePath("/home/user/diagrams/diagram.svg"));
+		assertEquals("/data/plantmcp/diagram.svg", EnvironmentUtils.resolvePath("/home/user/diagrams/diagram.svg"));
 	}
 
 	@Test
 	void insideDocker_relativePath_stripsDirectoryAndPrependsDataDir() {
 		System.setProperty(EnvironmentUtils.ENV_VAR, "true");
-		assertEquals("/data/diagram.svg", EnvironmentUtils.resolvePath("output/diagram.svg"));
+		assertEquals("/data/plantmcp/diagram.svg", EnvironmentUtils.resolvePath("output/diagram.svg"));
 	}
 
 	@Test
 	void insideDocker_pumlInputFile_stripsDirectoryAndPrependsDataDir() {
 		System.setProperty(EnvironmentUtils.ENV_VAR, "true");
-		assertEquals("/data/my-diagram.puml", EnvironmentUtils.resolvePath("/workspace/src/my-diagram.puml"));
+		assertEquals("/data/plantmcp/my-diagram.puml", EnvironmentUtils.resolvePath("/workspace/src/my-diagram.puml"));
 	}
 }

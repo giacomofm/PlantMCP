@@ -15,8 +15,8 @@ import java.nio.file.Path;
  * </ul>
  *
  * <p>The property is set automatically via the Dockerfile ENTRYPOINT
- * ({@code -DPLANTMCP_DOCKER=true}). Mount your host directory to {@value #DATA_DIR}
- * when starting the container so that input/output files are exchanged through that volume:
+ * ({@code -DPLANTMCP_DOCKER=true}). Mount your host directory to {@code /data} when
+ * starting the container so that input/output files land in {@value #DATA_DIR}:
  * <pre>
  *   docker run --rm -v /your/host/dir:/data plantmcp
  * </pre>
@@ -24,7 +24,7 @@ import java.nio.file.Path;
 final class EnvironmentUtils {
 
 	/** Directory used for all file I/O when running inside a container. */
-	static final String DATA_DIR = "/data";
+	static final String DATA_DIR = "/data/plantmcp";
 
 	/** JVM system property whose presence signals a containerised deployment. */
 	static final String ENV_VAR = "PLANTMCP_DOCKER";
