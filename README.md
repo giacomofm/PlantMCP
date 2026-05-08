@@ -31,7 +31,7 @@ _!!WARN!! You have more restrictions on file I/O when running in container mode.
 No Java required, get the latest image from [GitHub Packages](https://github.com/giacomofm/PlantMCP/pkgs/container/plantmcp) and add it to your MCP client config.
 
 When running in Docker, I suggest you mount it with `-v .:/data` so that your project root directory is accessible to the tool.  
-All file operations (`validate` with `path`, `render`) are rooted at `/data/plantmcp` — diagrams always land in that subdirectory.  
+All file operations (`validate` with `path`, `render`) are rooted there for the moment.  
 To configure your MCP client by setting `args` like this:
 
 ```json
@@ -52,7 +52,7 @@ To configure your MCP client by setting `args` like this:
 }
 ```
 
-Place your `.puml` input files in `/data/plantmcp` inside the container (i.e. a `plantmcp/` subfolder of the mounted directory) before calling `validate` or `render`. Rendered SVG files will appear there too.
+Place your `.puml` input files in the mounted directory before calling `validate` or `render`. Rendered SVG files will appear in the same directory.
 
 ## Tools
 
