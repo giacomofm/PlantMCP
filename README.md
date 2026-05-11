@@ -8,8 +8,6 @@ PlantMCP exposes PlantUML as a set of MCP tools that any compatible AI agent can
 
 ## Quick Start
 
-### With Java 25
-
 Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/PlantMCP/releases/tag/latest) and add it to your MCP client config:
 
 ```json
@@ -23,36 +21,6 @@ Download `plantmcp.jar` from the [latest release](https://github.com/giacomofm/P
   }
 }
 ```
-
-### With Docker
-
-_!!WARN!! You have more restrictions on file I/O when running in container mode._
-
-No Java required, get the latest image from [GitHub Packages](https://github.com/giacomofm/PlantMCP/pkgs/container/plantmcp) and add it to your MCP client config.
-
-When running in Docker, I suggest you mount it with `-v .:/data` so that your project root directory is accessible to the tool.  
-All file operations (`validate` with `path`, `render`) are rooted there for the moment.  
-To configure your MCP client by setting `args` like this:
-
-```json
-{
-  "mcpServers": {
-    "PlantMCP": {
-      "type": "local",
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "-v", ".:/data",
-        "ghcr.io/giacomofm/plantmcp:latest"
-      ]
-    }
-  }
-}
-```
-
-Place your `.puml` input files in the mounted directory before calling `validate` or `render`. Rendered SVG files will appear in the same directory.
 
 ## Tools
 
@@ -81,6 +49,11 @@ Exit codes: `0` success · `1` internal error · `2` user error · `3` validatio
 ```bash
 ./mvnw test       # run tests
 ./mvnw package    # package jar
+```
+
+## Test
+```bash
+dx @modelcontextprotocol/inspector java -jar "C:\\path\\to\\your\\plantmcp.jar"
 ```
 
 ## Stack

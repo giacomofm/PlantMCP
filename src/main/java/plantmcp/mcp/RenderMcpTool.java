@@ -41,8 +41,6 @@ class RenderMcpTool extends CustomMcpTool {
 				Notes:
 				- The SVG file is written to disk at the specified path.
 				- Always validate the source before rendering.
-				- When running in a Docker container: the output is always written to the project root directory.
-				- Use just the filename for `path` (e.g. `output.svg`), not a full path.
 				""".trim();
 	}
 
@@ -85,7 +83,7 @@ class RenderMcpTool extends CustomMcpTool {
 	private McpSchema.CallToolResult renderToSvg(String data, String path) {
 		try {
 			String svg = engine.renderSvg(data);
-			var outputPath = Path.of(EnvironmentUtils.resolvePath(path));
+			var outputPath = Path.of(path);
 			Files.writeString(outputPath, svg);
 			return McpSchema.CallToolResult.builder()
 					.addTextContent("SVG saved to " + outputPath.toAbsolutePath())

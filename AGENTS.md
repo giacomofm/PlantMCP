@@ -60,9 +60,6 @@ All tools extend CustomMcpTool → delegates to PlantEngine
 
 # Package
 ./mvnw package
-
-# Docker
-docker build -t plantmcp .
 ```
 
 ---
@@ -72,12 +69,6 @@ docker build -t plantmcp .
 `validate`, `encode`, `decode`, and `render` accept a `data` parameter (type `string`). `validate` and `render` also accept a `path` parameter (type `string`). For `validate`, exactly one of `data` or `path` must be provided. `render` requires both. All return `McpSchema.CallToolResult` with `isError` flag.
 
 > **Creating vs Rendering:** "Create" or "generate" a diagram always means producing PlantUML source text only. `render` must **never** be called automatically — it is opt-in and triggered only when the user explicitly requests SVG file output.
-
-### Docker / Container Mode
-
-When running inside a Docker container, `/data` is the project root directory (the host directory mounted via `-v .:/data`).
-All file operations (`validate` with `path`, `render`) resolve paths relative to `/data`.
-The tool descriptions already convey this to MCP agents; no extra handling is needed in code.
 
 ### `validate` — Validate PlantUML source text or file
 

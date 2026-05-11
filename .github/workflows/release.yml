@@ -5,23 +5,13 @@ on:
     branches:
       - main
 
-env:
-  REGISTRY: ghcr.io
-#  Would be nice, but must be run
-#  IMAGE_NAME: $(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
-
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
 
     steps:
-      - name: Lowercase image name
-        run: |
-          echo "IMAGE_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@v6
 
@@ -49,18 +39,3 @@ jobs:
             --prerelease \
             target/plantmcp.jar
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}:${{ github.sha }}

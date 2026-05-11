@@ -97,7 +97,7 @@ public final class ServerMcpApp {
 			### `encode`
 			- Input `data`: valid PlantUML source (validate first!)
 			- Output: an encoded string (Deflate + custom base64), e.g. `SyfFKj2rKt3CoKnELR1Io4ZDoSa7...`
-			- Use this encoded string to build a shareable URL: `https://www.plantuml.com/plantuml/uml/<encoded>`
+			- If the user ask for it use this encoded string to build a shareable URL: `https://www.plantuml.com/plantuml/uml/<encoded>`
 			- Call this after validation confirms the source is valid
 			
 			### `decode`
@@ -107,20 +107,10 @@ public final class ServerMcpApp {
 			
 			### `render`
 			- Input `data`: valid PlantUML source (validate first!)
-			- Input `path`: output file path where the SVG will be written (e.g. `diagram.svg`)
+			- Input `path`: absolute output file path where the SVG will be written
 			- Output: confirmation message with the absolute path of the saved SVG file
 			- The SVG content is NOT returned to the model — it is saved directly to disk
 			- **Only call this when the user explicitly requests SVG file output**
-			
-			## Docker / Container Mode
-			
-			When running inside a Docker container, all file operations (`validate` with `path`, `render`)
-			are rooted to the working dir. To ensure files are accessible:
-			- Use just the **filename** for `path` parameters (e.g. `diagram.puml`, `output.svg`),
-			  not absolute or relative paths with directories.
-			- When user wants to validate a file read the file and validate the source.
-			- When user wants to render a file to a different path generate the file on the root working dir and move it to the desired location.
-			  (e.g. render -> mv output.svg ./different/path/output.svg)
 			
 			## Example Scenarios
 			
